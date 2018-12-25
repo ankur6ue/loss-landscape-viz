@@ -9,12 +9,12 @@
 <script>
 
 // Structured (n * m) grid of data. Point coordinates are (xgrid, ygrid) 
-var n = 201, m = 201;
 var nverts = n*m;
 var values = new Array(n * m);
 var xgrid = new Array(n * m);
 var ygrid = new Array(n * m); 
 
+// Convert 2D to unwrapped 1D array
 xgrid = [];
 for (row of X) for (e of row) xgrid.push(e);
 ygrid = [];
@@ -36,11 +36,18 @@ var yrange = ymax-ymin;
     
 var zmin = d3.min(values);
 var zmax = d3.max(values);
+// Clip z max to 50 times z min as we are not interested in high peaks
+zmax = Math.min(zmax, 10*zmin)
 var zmid = 0.5*(zmin+zmax);
 var zrange = zmax-zmin;
-    
+
+for (i = 0; i < n; i++){
+	if (values[i] > zmax)
+		values[i] = zmax
+}
+		
 var scalefac = 1 //1.2/Math.max(xrange, yrange);
-var scalefacz = 0.01 //0.5/zrange;
+var scalefacz = 0.1 //0.5/zrange;
     
 // Use d3 for color scale 
 var color = d3.scaleLinear()
