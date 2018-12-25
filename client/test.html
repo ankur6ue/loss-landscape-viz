@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+
+<div id="container"></div>
+<script src="https://threejs.org/build/three.js"></script>
+<script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+<script src="resnet56_no_skip.js"> </script>
+<script>
+
+// Structured (n * m) grid of data. Point coordinates are (xgrid, ygrid) 
+var n = 51, m = 51;
+var nverts = n*m;
+var values = new Array(n * m);
+var xgrid = new Array(n * m);
+var ygrid = new Array(n * m); 
+
+xgrid = [];
+for (row of X) for (e of row) xgrid.push(e);
+ygrid = [];
+for (row of Y) for (e of row) ygrid.push(e);
+values = [];
+for (row of Z) for (e of row) values.push(e);
+    
+    
+// Obtain centre of grid and scale factors
+var xmin = d3.min(xgrid);
+var xmax = d3.max(xgrid);
+var xmid = 0.5*(xmin+xmax);
+var xrange = xmax-xmin;
+    
+var ymin = d3.min(ygrid);
+var ymax = d3.max(ygrid);
+var ymid = 0.5*(ymin+ymax);
+var yrange = ymax-ymin;
+    
+var zmin = d3.min(values);
+var zmax = d3.max(values);
+var zmid = 0.5*(zmin+zmax);
+var zrange = zmax-zmin;
+    
+var scalefac = 1 //1.2/Math.max(xrange, yrange);
+var scalefacz = 0.1 //0.5/zrange;
+    
+// Use d3 for color scale 
+var color = d3.scaleLinear()
+    .domain(d3.extent(values))
+    .interpolate(function() { return d3.interpolateRdBu; });
+    
+
+// Initialise threejs geometry
+var geometry = new THREE.Geometry(); 
+    
+// Add grid vertices to geometry
+for (var k = 0; k < nverts; ++k) {
+    var newvert= new THREE.Vector3( (xgrid[k] - xmid) * scalefac, (ygrid[k] - ymid) * scalefac, (values[k] - zmid) * scalefacz);
+    geometry.vertices.push(newvert);
+}
+    
+// Add cell faces (2 traingles per cell) to geometry
+for (var j = 0; j < m-1; j++){
+    for (var i = 0; i < n-1; i++){ 
+        var n0 = j*n + i;
+        var n1 = n0 + 1;
+        var n2 = (j+1)*n + i + 1;
+        var n3 = n2 - 1;
+        face1= new THREE.Face3(n0,n1,n2);
+        face2= new THREE.Face3(n2,n3,n0);
+        face1.vertexColors[0]=new THREE.Color(color(values[n0]));
+        face1.vertexColors[1]=new THREE.Color(color(values[n1]));
+        face1.vertexColors[2]=new THREE.Color(color(values[n2]));
+        face2.vertexColors[0]=new THREE.Color(color(values[n2]));
+        face2.vertexColors[1]=new THREE.Color(color(values[n3]));
+        face2.vertexColors[2]=new THREE.Color(color(values[n0]));
+        geometry.faces.push(face1);
+        geometry.faces.push(face2);
+    }
+}
+    
+// Compute normals for shading
+geometry.computeFaceNormals();
+geometry.computeVertexNormals();
+    
+// Use MeshPhongMaterial for a reflective surface
+var material = new THREE.MeshPhongMaterial( {
+    side: THREE.DoubleSide,
+    color: 0xffffff,
+    vertexColors: THREE.VertexColors,
+    specular: 0x050505,
+    shininess: 100.,
+    emissive: 0x111111,
+});
+    
+// Initialise threejs scene
+var scene = new THREE.Scene();
+    
+// Add Mesh to scene
+scene.add( new THREE.Mesh( geometry, material ) );
+    
+// Create renderer
+var renderer = new THREE.WebGLRenderer({alpha:true, antialias:true}); 
+renderer.setPixelRatio( window.devicePixelRatio );
+renderer.setSize( 1000, 1000 );
+
+// Set target DIV for rendering
+var container = document.getElementById( 'container' );
+container.appendChild( renderer.domElement );
+
+// Define the camera
+var camera = new THREE.PerspectiveCamera( 45, 1, 0.1, 10 );
+camera.position.z = 2; 
+
+// Add controls 
+var controls = new THREE.OrbitControls( camera, renderer.domElement );
+controls.addEventListener( 'change', function(){
+    renderer.render(scene,camera); // re-render if controls move/zoom 
+} ); 
+controls.enableZoom = true; 
+
+// Light above
+var light = new THREE.PointLight( 0xffffff);
+light.position.set( 0, 0, 3 );
+scene.add( light );
+    
+// Light below
+var light = new THREE.PointLight( 0xffffff);
+light.position.set( 0, 0, -3 );
+scene.add( light );
+
+// Ambient light
+var light = new THREE.AmbientLight( 0x222222 );
+scene.add( light );  
+  
+// Make initial call to render scene
+renderer.render( scene, camera );
+    
+</script>
