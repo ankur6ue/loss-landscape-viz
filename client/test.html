@@ -5,9 +5,11 @@
 <script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+<script src="data/resnet56_no_skip_higher_res.js"> </script>
 <script>
 
 // Structured (n * m) grid of data. Point coordinates are (xgrid, ygrid) 
+var n = 201, m = 201;
 var nverts = n*m;
 var values = new Array(n * m);
 var xgrid = new Array(n * m);
@@ -38,6 +40,7 @@ var zmid = 0.5*(zmin+zmax);
 var zrange = zmax-zmin;
     
 var scalefac = 1 //1.2/Math.max(xrange, yrange);
+var scalefacz = 0.01 //0.5/zrange;
     
 // Use d3 for color scale 
 var color = d3.scaleLinear()
