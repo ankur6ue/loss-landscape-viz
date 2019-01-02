@@ -8,9 +8,28 @@ body {
   vertical-align: text-bottom;
 }
 
+#tooltip {
+/*display:block;*/
+position: relative;
+width: 180px;
+height: 30px;
+background: #FFFFFF;
+z-index: 2;
+}
 /*
  * Sidebar
  */
+#canvas {
+    background-color: #FFFFFF;
+    width: 800px;
+    height: 800px;
+    border: 0px;
+    margin: 0px;
+    padding: 0px;
+    position: relative; /* fixed or static */
+    top: 0px;
+    left: 0px;
+}
 
 .sidebar {
   position: fixed;
