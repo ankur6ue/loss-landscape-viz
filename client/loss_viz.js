@@ -54,7 +54,7 @@ function create_mesh(X, Y, Z) {
 	var values = new Array(n * m);
 	var xgrid = new Array(n * m);
 	var ygrid = new Array(n * m);
-
+			
 	// Convert 2D to unwrapped 1D array
 	xgrid = [];
 	for (row of X)
@@ -69,6 +69,11 @@ function create_mesh(X, Y, Z) {
 		for (e of row)
 			values.push(e);
 
+	// Get contours
+	var contours = d3.contours()
+		.size([X.length, X.length])
+		.thresholds(d3.range(1, 10))(values)
+		
 	// Obtain centre of grid and scale factors
 	var xmin = d3.min(xgrid);
 	var xmax = d3.max(xgrid);
@@ -154,7 +159,7 @@ function create_mesh(X, Y, Z) {
 			opacity: 1,
 			wireframe: false
 		});
-	return new THREE.Mesh(geometry, material)
+	return {'mesh': new THREE.Mesh(geometry, material), 'contours': contours}
 }
 
 function init(mesh) {
@@ -170,10 +175,10 @@ function init(mesh) {
 			antialias: true
 		});
 	renderer.setPixelRatio(1);
-	renderer.setSize(800, 800);
+	renderer.setSize(1280, 1080);
 
 	// Set target DIV for rendering
-	var container = document.getElementById('canvas');
+	var container = document.getElementById('renderer-content');
 	container.appendChild(renderer.domElement);
 
 	// Define the camera
@@ -222,46 +227,94 @@ document.addEventListener("DOMContentLoaded", function () {
 	$("#slider1").slider({
 		max: 4,
 		step: 0.2,
+		value: 1,
 		slide: function (event, ui) {
-			this1.light.intensity = ui.value
-				this1.renderer.render(this1.scene, this1.camera);
+			light.intensity = ui.value
+			renderer.render(scene, camera);
+		}
+	});
+	
+	$("#sliderlX").slider({
+		max: 4,
+		min: -4,
+		value: 0,
+		step: 0.2,
+		slide: function (event, ui) {
+			light.position.x = ui.value
+			renderer.render(scene, camera);
+		}
+	});
+	
+	$("#sliderlY").slider({
+		max: 4,
+		min: -4,
+		value: 0,
+		step: 0.2,
+		slide: function (event, ui) {
+			light.position.y = ui.value
+			renderer.render(scene, camera);
+		}
+	});
+	
+	$("#sliderlZ").slider({
+		max: 10,
+		min: 0,
+		value: 3,
+		step: 0.2,
+		slide: function (event, ui) {
+			light.position.z = ui.value
+			renderer.render(scene, camera);
 		}
 	});
 
 	$('#wireframe').change(function () {
 		if ($(this).prop('checked')) {
-			for (model in this1.models) {
-				this1.models[model].mesh.material.wireframe = true;
+			for (model in models) {
+				models[model].mesh.material.wireframe = true;
 			}
 		} // enable wireframe on all models
 		else {
-			for (model in this1.models) {
-				this1.models[model].mesh.material.wireframe = false;
+			for (model in models) {
+				models[model].mesh.material.wireframe = false;
 			}
 		}
-		this1.renderer.render(this1.scene, this1.camera);
+		renderer.render(scene, camera);
+	})
+	
+	$('#resnet_short').change(function () {
+		if ($(this).prop('checked')) {
+			models["resnet_short"].mesh.visible = true;
+		} // enable wireframe on all models
+		else {
+			for (model in models) {
+				models["resnet_short"].mesh.visible = false;
+			}
+		}
+		renderer.render(scene, camera);
+	})
+	
+	$('#resnet_no_short').change(function () {
+		if ($(this).prop('checked')) {
+			models["resnet_no_short"].mesh.visible = true;
+		} // enable wireframe on all models
+		else {
+			for (model in models) {
+				models["resnet_no_short"].mesh.visible = false;
+			}
+		}
+		renderer.render(scene, camera);
 	})
 
-	$('.ModelDropDownListItem').click(function (e) {
-		var name = e.currentTarget;
-		var modelName = name.getAttribute("data-name")
-			console.log(modelName);
-		// hide all models and then make the selected one visible, unless 'all' is selected, in which case make
-		// all of them visible
-		if (modelName == 'all') {
-			for (model in this1.models)
-				this1.models[model].mesh.visible = true;
-
-		} else {
-			for (model in this1.models) {
-				this1.models[model].mesh.visible = false;
+	$('#All').change(function () {
+		if ($(this).prop('checked')) {
+			for (model in models)
+				models[model].mesh.visible = true;
+		} // enable wireframe on all models
+		else {
+			for (model in models) {
+				models[model].mesh.visible = false;
 			}
-
-			this1.models[modelName].mesh.visible = true
 		}
-		this1.activeModel = modelName;
-		this1.renderer.render(this1.scene, this1.camera);
-	});
-
-}
-	.bind(this), false);
+		renderer.render(scene, camera);
+	})
+})

@@ -43,15 +43,12 @@
                     Models
                     <span class="caret"></span></button>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="ModelList">
-                    <li class="ModelDropDownListItem" data-name="resnet_short" role="presentation"><a role="menuitem"
-                                                                                              tabindex="-1" href="#">Resnet (short)</a> 
-																							 
-                    </li>
-                    <li class="ModelDropDownListItem" data-name="resnet_no_short" role="presentation"><a role="menuitem"
-                                                                                              tabindex="-1" href="#">Resnet (no short)</a>
-                    </li>
-					<li class="ModelDropDownListItem" data-name="all" role="presentation"><a role="menuitem"
-                                                                                              tabindex="-1" href="#">All</a>
+					<li><input type="checkbox" id="resnet_short"/>&nbsp;Resnet (short)</a></li>
+                    
+                    <li><input type="checkbox" id="resnet_no_short" />&nbsp;Resnet (no short)</a></li>
+                    
+					<li><input type="checkbox" id="All"/>&nbsp;All</a></li>
+                                                                                              
                     </li>
                 </ul>
             </div>
@@ -63,12 +60,44 @@
 			<label class="form-check-label" for="wireframe">wireframe</label>
 		</div>
 		
-        <ul class="nav flex-column mb-2">
-          <li class="nav-item">
-			<div id="slider1"></div> 
-          </li>
-        </ul>
-      </div>
+	  <div class="form-group">
+		 <label for="slider1">Light Intensity</label>
+		<div id="slider1"></div> 
+	  </div>
+      
+	  <div class="form-group">
+		 <label for="sliderlX">Light Position (X)</label>
+		<div id="sliderlX"></div> 
+	  </div>
+
+	<div class="form-group">
+		 <label for="sliderlY">Light Position (Y)</label>
+		<div id="sliderlY"></div> 
+	  </div>
+
+	<div class="form-group">
+		 <label for="sliderlZ">Light Position (Z)</label>
+		<div id="sliderlZ"></div> 
+	  </div>
+
+<div class="form-group row">
+    <label for="cam_pos_x" class="col-sm-1 col-form-label">X</label>
+    <div class="col-sm-3">
+      <input type="text" readonly class="form-control-plaintext" id="cam_pos_x" value="0.0">
+    </div>
+	<label for="cam_pos_y" class="col-sm-1 col-form-label">Y</label>
+    <div class="col-sm-3">
+      <input type="text" readonly class="form-control-plaintext" id="cam_pos_y" value="0.0">
+    </div>
+	<label for="cam_pos_z" class="col-sm-1 col-form-label">Z</label>
+    <div class="col-sm-2">
+      <input type="text" readonly class="form-control-plaintext" id="cam_pos_z" value="0">
+    </div>
+	
+  </div>
+  
+  </div>
+  
     </nav>
 	
     <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
@@ -83,9 +112,12 @@
 		
       </div>
 	  <div id="tooltip"></div>
-	  <div id="canvas"></div>
-		
-      
+	  <div id="renderer-content"></div>
+	 <!-- 
+	  <div id="contour-content">
+		<canvas width="800" height="400"></canvas>
+	  </div>
+	!-->
     </main>
 	
   </div>
@@ -106,17 +138,41 @@
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 <script id="loss-viz" src="loss_viz.js"></script>
 <script src="data/resnet56_no_skip_higher_res.js"> </script>
+<script src="https://d3js.org/d3-contour.v1.min.js"></script>
 <script>
-var models = {}
-models['resnet_no_short'] = {'X': X, 'Y': Y, 'Z': Z, 'mesh': create_mesh(X, Y, Z)}
+	var models = {}
+	models['resnet_no_short'] = {'X': X, 'Y': Y, 'Z': Z}
+	var obj = create_mesh(X,Y,Z);
+	models['resnet_no_short']['mesh'] = obj['mesh']
+	models['resnet_no_short']['contours'] = obj['contours']
 </script>
 <script src="data/resnet56_skip.js"> </script>
 <script>
-models['resnet_short'] = {'X': X, 'Y': Y, 'Z': Z, 'mesh': create_mesh(X, Y, Z)}
-init(models['resnet_no_short'].mesh)
-add_mesh(models['resnet_short'].mesh)
-models['resnet_no_short'].mesh.visible = false;
-renderer.render(scene, camera);
+	models['resnet_short'] = {'X': X, 'Y': Y, 'Z': Z}
+	var obj = create_mesh(X,Y,Z);
+	models['resnet_short']['mesh'] = obj['mesh']
+	models['resnet_short']['contours'] = obj['contours']
+	
+	init(models['resnet_no_short'].mesh)
+	add_mesh(models['resnet_short'].mesh)
+	models['resnet_no_short'].mesh.visible = false;
+	renderer.render(scene, camera);
+/* For rendering contours. Doesn't work..	
+	var context = d3.select('#contour-content canvas')
+  .node()
+  .getContext('2d');
+  context.lineWidth = 0.5;
+  context.strokeStyle = '#333';
+
+  var geoGenerator = d3.geoPath(models['resnet_no_short'].contours)
+  .projection(d3.geoIdentity)
+  .context(context);
+	
+  context.beginPath();
+  context.strokeStyle = '#ccc';
+  geoGenerator();
+  context.stroke();
+*/
 </script>
 
 
