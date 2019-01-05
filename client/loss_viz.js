@@ -15,13 +15,13 @@ function onMouseMove(event) {
 	var x = event.clientX - bounds.left;
 	var y = event.clientY - bounds.top;
 	$("#tooltip").text("");
-	$( "#tooltip" ).position({
+	$("#tooltip").position({
 		my: "left+3 bottom-3",
 		of: event,
 		collision: "fit"
 	});
-	mouse.x = (x / renderer.domElement.clientWidth ) * 2 - 1;
-    mouse.y = -(y / renderer.domElement.clientHeight ) * 2 + 1;
+	mouse.x = (x / renderer.domElement.clientWidth) * 2 - 1;
+	mouse.y =  - (y / renderer.domElement.clientHeight) * 2 + 1;
 	//console.log('x = '+ mouse.x + ' y = ' + mouse.y )
 	raycaster.setFromCamera(mouse, camera);
 
@@ -29,10 +29,10 @@ function onMouseMove(event) {
 	var intersects = raycaster.intersectObjects(scene.children);
 	if (intersects.length > 0) {
 		var x = intersects[0].point.x
-		var y = intersects[0].point.y
-		var z = intersects[0].point.z
-		console.log('x = '+ x + ' y = ' + y + ' z = ' + z)
-		$("#tooltip").text('x = '+ parseFloat(x).toFixed(2) + ' y = ' + parseFloat(y).toFixed(2) + ' z = ' + parseFloat(z).toFixed(2));
+			var y = intersects[0].point.y
+			var z = intersects[0].point.z
+			console.log('x = ' + x + ' y = ' + y + ' z = ' + z)
+			$("#tooltip").text('x = ' + parseFloat(x).toFixed(2) + ' y = ' + parseFloat(y).toFixed(2) + ' z = ' + parseFloat(z).toFixed(2));
 	}
 }
 
@@ -41,11 +41,21 @@ function onMouseDown(event) {
 	var bounds = event.target.getBoundingClientRect();
 	var x = event.clientX - bounds.left;
 	var y = event.clientY - bounds.top;
-	mouse.x = (x / renderer.domElement.clientWidth ) * 2 - 1;
-    mouse.y = -(y / renderer.domElement.clientHeight ) * 2 + 1;
-	
+	mouse.x = (x / renderer.domElement.clientWidth) * 2 - 1;
+	mouse.y =  - (y / renderer.domElement.clientHeight) * 2 + 1;
 
 }
+
+function updateUI(camera) {
+	$("#cam_pos_x").val(parseFloat(camera.position.x).toFixed(2))
+	$("#cam_pos_y").val(parseFloat(camera.position.y).toFixed(2))
+	$("#cam_pos_z").val(parseFloat(camera.position.z).toFixed(2))
+
+	$("#cam_rot_x").val(parseFloat(camera.rotation.x * 180 / 3.14).toFixed(2))
+	$("#cam_rot_y").val(parseFloat(camera.rotation.y * 180 / 3.14).toFixed(2))
+	$("#cam_rot_z").val(parseFloat(camera.rotation.z * 180 / 3.14).toFixed(2))
+}
+
 function create_mesh(X, Y, Z) {
 	var n = X.length,
 	m = X.length;
@@ -54,7 +64,7 @@ function create_mesh(X, Y, Z) {
 	var values = new Array(n * m);
 	var xgrid = new Array(n * m);
 	var ygrid = new Array(n * m);
-			
+
 	// Convert 2D to unwrapped 1D array
 	xgrid = [];
 	for (row of X)
@@ -73,9 +83,9 @@ function create_mesh(X, Y, Z) {
 	var contours = d3.contours()
 		.size([X.length, X.length])
 		.thresholds(d3.range(1, 10))(values)
-		
-	// Obtain centre of grid and scale factors
-	var xmin = d3.min(xgrid);
+
+		// Obtain centre of grid and scale factors
+		var xmin = d3.min(xgrid);
 	var xmax = d3.max(xgrid);
 	var xmid = 0.5 * (xmin + xmax);
 	var xrange = xmax - xmin;
@@ -159,7 +169,10 @@ function create_mesh(X, Y, Z) {
 			opacity: 1,
 			wireframe: false
 		});
-	return {'mesh': new THREE.Mesh(geometry, material), 'contours': contours}
+	return {
+		'mesh': new THREE.Mesh(geometry, material),
+		'contours': contours
+	}
 }
 
 function init(mesh) {
@@ -185,7 +198,7 @@ function init(mesh) {
 	camera = new THREE.PerspectiveCamera(45, 1, 0.1, 40);
 	camera.position.z = 5;
 	camera.position.y = 4;
-
+	updateUI(camera);
 	// for picking
 	raycaster = new THREE.Raycaster();
 	mouse = new THREE.Vector2();
@@ -194,6 +207,7 @@ function init(mesh) {
 	var controls = new THREE.OrbitControls(camera, renderer.domElement);
 	controls.addEventListener('change', function () {
 		renderer.render(scene, camera); // re-render if controls move/zoom
+		updateUI(camera)
 	});
 	controls.enableZoom = true;
 
@@ -230,10 +244,10 @@ document.addEventListener("DOMContentLoaded", function () {
 		value: 1,
 		slide: function (event, ui) {
 			light.intensity = ui.value
-			renderer.render(scene, camera);
+				renderer.render(scene, camera);
 		}
 	});
-	
+
 	$("#sliderlX").slider({
 		max: 4,
 		min: -4,
@@ -241,10 +255,10 @@ document.addEventListener("DOMContentLoaded", function () {
 		step: 0.2,
 		slide: function (event, ui) {
 			light.position.x = ui.value
-			renderer.render(scene, camera);
+				renderer.render(scene, camera);
 		}
 	});
-	
+
 	$("#sliderlY").slider({
 		max: 4,
 		min: -4,
@@ -252,10 +266,10 @@ document.addEventListener("DOMContentLoaded", function () {
 		step: 0.2,
 		slide: function (event, ui) {
 			light.position.y = ui.value
-			renderer.render(scene, camera);
+				renderer.render(scene, camera);
 		}
 	});
-	
+
 	$("#sliderlZ").slider({
 		max: 10,
 		min: 0,
@@ -263,7 +277,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		step: 0.2,
 		slide: function (event, ui) {
 			light.position.z = ui.value
-			renderer.render(scene, camera);
+				renderer.render(scene, camera);
 		}
 	});
 
@@ -280,7 +294,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		}
 		renderer.render(scene, camera);
 	})
-	
+
 	$('#resnet_short').change(function () {
 		if ($(this).prop('checked')) {
 			models["resnet_short"].mesh.visible = true;
@@ -292,7 +306,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		}
 		renderer.render(scene, camera);
 	})
-	
+
 	$('#resnet_no_short').change(function () {
 		if ($(this).prop('checked')) {
 			models["resnet_no_short"].mesh.visible = true;

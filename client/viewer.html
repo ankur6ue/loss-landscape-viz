@@ -1,8 +1,7 @@
-
 <!doctype html>
 <html lang="en">
-  <head>
-    
+<head>
+
     <title>Dashboard Template · Bootstrap</title>
 
     <!-- Bootstrap core CSS -->
@@ -19,108 +18,126 @@
           font-size: 3.5rem;
         }
       }
+
     </style>
-	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <!-- Custom styles for this template -->
     <link href="dashboard.css" rel="stylesheet">
-  </head>
-  <body>
-    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-  <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Loss Visualization</a>
-  
+</head>
+<body>
+<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Loss Visualization</a>
+
 </nav>
 
 <div class="container-fluid">
-  <div class="row">
-    <nav class="col-md-2 d-none d-md-block bg-light sidebar">
-      <div class="sidebar-sticky">
-       
-		<ul class="nav flex-column mb-2">
-          <li class="nav-item">
-			<div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="ModelList" data-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false">
-                    Models
-                    <span class="caret"></span></button>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="ModelList">
-					<li><input type="checkbox" id="resnet_short"/>&nbsp;Resnet (short)</a></li>
-                    
-                    <li><input type="checkbox" id="resnet_no_short" />&nbsp;Resnet (no short)</a></li>
-                    
-					<li><input type="checkbox" id="All"/>&nbsp;All</a></li>
-                                                                                              
+    <div class="row">
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+            <div class="sidebar-sticky">
+
+                <ul class="nav flex-column mb-2">
+                    <li class="nav-item">
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="ModelList"
+                                    data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">
+                                Models
+                                <span class="caret"></span></button>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="ModelList">
+                                <li><input type="checkbox" id="resnet_short"/>&nbsp;Resnet (short)</a></li>
+
+                                <li><input type="checkbox" id="resnet_no_short"/>&nbsp;Resnet (no short)</a></li>
+
+                                <li><input type="checkbox" id="All"/>&nbsp;All</a></li>
+
+                                </li>
+                            </ul>
+                        </div>
                     </li>
                 </ul>
+                <div class="border">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="wireframe">
+                        <label class="form-check-label" for="wireframe">wireframe</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="slider1">Light Intensity</label>
+                    <div id="slider1"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="sliderlX">Light Position (X)</label>
+                    <div id="sliderlX"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="sliderlY">Light Position (Y)</label>
+                    <div id="sliderlY"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="sliderlZ">Light Position (Z)</label>
+                    <div id="sliderlZ"></div>
+                </div>
+
+                <label class="col-sm-8 col-form-label">Camera Position</label>
+                <div class="form-group border row">
+                    <label for="cam_pos_x" class="col-sm-1 col-form-label">X</label>
+                    <div class="col-sm-3" style="padding-right: 0">
+                        <input type="text" class="form-control-plaintext" id="cam_pos_x" value="0.0">
+                    </div>
+                    <label for="cam_pos_y" class="col-sm-1 col-form-label">Y</label>
+                    <div class="col-sm-3" style="padding-right: 0">
+                        <input type="text" class="form-control-plaintext" id="cam_pos_y" value="0.0">
+                    </div>
+                    <label for="cam_pos_z" class="col-sm-1 col-form-label">Z</label>
+                    <div class="col-sm-3" style="padding-right: 0">
+                        <input type="text" class="form-control-plaintext" id="cam_pos_z" value="0">
+                    </div>
+                </div>
+                <label class="col-sm-8 col-form-label">Camera Rotation</label>
+                <div class="form-group border row">
+                    <label for="cam_rot_x" class="col-sm-1 col-form-label">X</label>
+                    <div class="col-sm-3" style="padding-right: 0">
+                        <input type="text" class="form-control-plaintext" id="cam_rot_x" value="0.0">
+                    </div>
+                    <label for="cam_rot_y" class="col-sm-1 col-form-label">Y</label>
+                    <div class="col-sm-3" style="padding-right: 0">
+                        <input type="text" class="form-control-plaintext" id="cam_rot_y" value="0.0">
+                    </div>
+                    <label for="cam_rot_z" class="col-sm-1 col-form-label">Z</label>
+                    <div class="col-sm-3" style="padding-right: 0">
+                        <input type="text" class="form-control-plaintext" id="cam_rot_z" value="0">
+                    </div>
+                </div>
             </div>
-			</li>
-        </ul>
-		
-		<div class="form-check">
-			<input type="checkbox" class="form-check-input" id="wireframe">
-			<label class="form-check-label" for="wireframe">wireframe</label>
-		</div>
-		
-	  <div class="form-group">
-		 <label for="slider1">Light Intensity</label>
-		<div id="slider1"></div> 
-	  </div>
-      
-	  <div class="form-group">
-		 <label for="sliderlX">Light Position (X)</label>
-		<div id="sliderlX"></div> 
-	  </div>
 
-	<div class="form-group">
-		 <label for="sliderlY">Light Position (Y)</label>
-		<div id="sliderlY"></div> 
-	  </div>
+    </div>
 
-	<div class="form-group">
-		 <label for="sliderlZ">Light Position (Z)</label>
-		<div id="sliderlZ"></div> 
-	  </div>
-
-<div class="form-group row">
-    <label for="cam_pos_x" class="col-sm-1 col-form-label">X</label>
-    <div class="col-sm-3">
-      <input type="text" readonly class="form-control-plaintext" id="cam_pos_x" value="0.0">
-    </div>
-	<label for="cam_pos_y" class="col-sm-1 col-form-label">Y</label>
-    <div class="col-sm-3">
-      <input type="text" readonly class="form-control-plaintext" id="cam_pos_y" value="0.0">
-    </div>
-	<label for="cam_pos_z" class="col-sm-1 col-form-label">Z</label>
-    <div class="col-sm-2">
-      <input type="text" readonly class="form-control-plaintext" id="cam_pos_z" value="0">
-    </div>
-	
-  </div>
-  
-  </div>
-  
     </nav>
-	
+
     <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2">Dashboard</h1>
-        <div class="btn-toolbar mb-2 mb-md-0">
-          <div class="btn-group mr-2">
-            <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
-            <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
-          </div>
-        </div>	
-		
-      </div>
-	  <div id="tooltip"></div>
-	  <div id="renderer-content"></div>
-	 <!-- 
-	  <div id="contour-content">
-		<canvas width="800" height="400"></canvas>
-	  </div>
-	!-->
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2">Dashboard</h1>
+            <div class="btn-toolbar mb-2 mb-md-0">
+                <div class="btn-group mr-2">
+                    <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+                </div>
+            </div>
+
+        </div>
+        <div id="tooltip"></div>
+        <div id="renderer-content"></div>
+        <!--
+         <div id="contour-content">
+           <canvas width="800" height="400"></canvas>
+         </div>
+       !-->
     </main>
-	
-  </div>
+
+</div>
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -137,7 +154,7 @@
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 <script id="loss-viz" src="loss_viz.js"></script>
-<script src="data/resnet56_no_skip_higher_res.js"> </script>
+<script src="data/resnet56_no_skip_higher_res.js"></script>
 <script src="https://d3js.org/d3-contour.v1.min.js"></script>
 <script>
 	var models = {}
@@ -145,8 +162,9 @@
 	var obj = create_mesh(X,Y,Z);
 	models['resnet_no_short']['mesh'] = obj['mesh']
 	models['resnet_no_short']['contours'] = obj['contours']
+
 </script>
-<script src="data/resnet56_skip.js"> </script>
+<script src="data/resnet56_skip.js"></script>
 <script>
 	models['resnet_short'] = {'X': X, 'Y': Y, 'Z': Z}
 	var obj = create_mesh(X,Y,Z);
@@ -173,6 +191,7 @@
   geoGenerator();
   context.stroke();
 */
+
 </script>
 
 
