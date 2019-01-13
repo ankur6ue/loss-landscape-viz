@@ -5,7 +5,74 @@ var camera;
 var light;
 var raycaster;
 var mouse;
+var models = {}
+var modelnames = [
+{full_name: 'resnet56_no_skip_higher_res', common_name: 'Resnet-56 (no short)'},
+{full_name: 'resnet56_skip', common_name: 'Resnet-56 (short)'},
+{full_name: 'resnet20_no_skip_low_res', common_name: 'Resnet-20 (no short)'},
+{full_name: 'resnet20_low_res', common_name: 'Resnet-20 (short)'},
+{full_name: 'vgg16_low_res', common_name: 'VGG 16'},
+{full_name: 'densenet121', common_name: 'Densenet-121'}
+]
+var visible_model = 'resnet56_no_skip_higher_res'
 
+// tmpCallback hack is needed because the ajax request to load the models is being made 
+// in a for loop and the value of the model when the ajax request was fired is needed. Without the tmpCallback,
+// there is no easy way to store the value of the model at the time the request was fired and the value of the model
+// at the end of the for loop will be used. With the tmpcallback, the value of the model is stored in the function closure
+// ensuring the correct value is available. 
+
+var tmpCallback = function(model) {
+    return function(data, textStatus, jqxhr) {
+        if (jqxhr.status == 200) {
+				dropdown = $(".dropdown-menu")
+				// add model name to the dropdown list
+				if (model.full_name == this1.visible_model)
+				{ // mark checked
+					dropdown.append('<li><input type="checkbox" class = "clsModelSelect" id=' + model.full_name + ' checked>' + model.common_name + '</li>')
+				}
+				else
+				{
+					dropdown.append('<li><input type="checkbox" class = "clsModelSelect" id=' + model.full_name + '>' + model.common_name + '</li>')
+				}
+					
+				
+				$('.clsModelSelect').change(function (e) {
+					var name = e.currentTarget;
+					if ($(this).prop('checked')) {
+						this1.models[e.currentTarget.id].mesh.visible = true;
+					} else {
+						this1.models[e.currentTarget.id].mesh.visible = false;
+					}
+					this1.renderer.render(this1.scene, this1.camera);
+				});
+				console.log("successfully loaded resnet56_no_skip_higher_res.js");
+				this1.models[model.full_name] = {
+					'X' : X,
+					'Y' : Y,
+					'Z' : Z
+				}
+				var obj = this1.create_mesh(X, Y, Z);
+				this1.models[model.full_name]['mesh'] = obj['mesh']
+				this1.models[model.full_name]['contours'] = obj['contours']
+				this1.add_mesh(obj['mesh']);
+				this1.models[model.full_name].mesh.visible = false;
+				if (model.full_name == this1.visible_model)
+					this1.models[model.full_name].mesh.visible = true;
+				this1.renderer.render(this1.scene, this1.camera);
+			};
+    };
+};
+
+function loadData() {
+	init();
+	this1 = this;
+	for (var i = 0; i < modelnames.length; i++) { 
+		var model = modelnames[i]
+		$.getScript("data//" + model.full_name + ".js", tmpCallback(model)) 
+	}
+}
+	
 function onMouseMove(event) {
 
 	// calculate mouse position in normalized device coordinates
@@ -169,18 +236,18 @@ function create_mesh(X, Y, Z) {
 			opacity: 1,
 			wireframe: false
 		});
+	var mesh = new THREE.Mesh(geometry, material);	
+	mesh.rotation.x = -Math.PI / 2;	
+	mesh.position.y = -1
 	return {
-		'mesh': new THREE.Mesh(geometry, material),
+		'mesh': mesh,
 		'contours': contours
 	}
 }
 
-function init(mesh) {
+function init() {
 	// Initialise threejs scene
 	scene = new THREE.Scene();
-
-	// Add Mesh to scene
-	scene.add(mesh);
 
 	// Create renderer
 	renderer = new THREE.WebGLRenderer({
@@ -188,7 +255,7 @@ function init(mesh) {
 			antialias: true
 		});
 	renderer.setPixelRatio(1);
-	renderer.setSize(1280, 1080);
+	renderer.setSize(1080, 720);
 
 	// Set target DIV for rendering
 	var container = document.getElementById('renderer-content');
@@ -196,8 +263,8 @@ function init(mesh) {
 
 	// Define the camera
 	camera = new THREE.PerspectiveCamera(45, 1, 0.1, 40);
-	camera.position.z = 5;
-	camera.position.y = 4;
+	camera.position.z = 4;
+	camera.position.y = 0;
 	updateUI(camera);
 	// for picking
 	raycaster = new THREE.Raycaster();
@@ -295,40 +362,5 @@ document.addEventListener("DOMContentLoaded", function () {
 		renderer.render(scene, camera);
 	})
 
-	$('#resnet_short').change(function () {
-		if ($(this).prop('checked')) {
-			models["resnet_short"].mesh.visible = true;
-		} // enable wireframe on all models
-		else {
-			for (model in models) {
-				models["resnet_short"].mesh.visible = false;
-			}
-		}
-		renderer.render(scene, camera);
-	})
-
-	$('#resnet_no_short').change(function () {
-		if ($(this).prop('checked')) {
-			models["resnet_no_short"].mesh.visible = true;
-		} // enable wireframe on all models
-		else {
-			for (model in models) {
-				models["resnet_no_short"].mesh.visible = false;
-			}
-		}
-		renderer.render(scene, camera);
-	})
-
-	$('#All').change(function () {
-		if ($(this).prop('checked')) {
-			for (model in models)
-				models[model].mesh.visible = true;
-		} // enable wireframe on all models
-		else {
-			for (model in models) {
-				models[model].mesh.visible = false;
-			}
-		}
-		renderer.render(scene, camera);
-	})
+	
 })
