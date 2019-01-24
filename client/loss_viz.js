@@ -7,8 +7,11 @@ var raycaster;
 var mouse;
 var models = {}
 var modelnames = [
+{full_name: 'resnet110_no_skip_low_res', common_name: 'Resnet-110 (no short)'},
+{full_name: 'resnet110_skip_low_res', common_name: 'Resnet-110 (short)'},
 {full_name: 'resnet56_no_skip_higher_res', common_name: 'Resnet-56 (no short)'},
 {full_name: 'resnet56_skip', common_name: 'Resnet-56 (short)'},
+//{full_name: 'resnet56_no_skip_super_high_res', common_name: 'Resnet-56 (no short, 1000x1000)'},
 {full_name: 'resnet20_no_skip_low_res', common_name: 'Resnet-20 (no short)'},
 {full_name: 'resnet20_low_res', common_name: 'Resnet-20 (short)'},
 {full_name: 'vgg16_low_res', common_name: 'VGG 16'},
